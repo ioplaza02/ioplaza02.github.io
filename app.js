@@ -102,14 +102,18 @@ function renderSide() {
     const list = TOOLS.filter((t) => t.group === g.id);
     if (!list.length) return;
     html += `
-      <li class="side-group" data-side-group="${g.id}">
-        <a class="side-group-link" href="#g-${g.id}">${escapeHtml(g.name)}<span class="side-count">${list.length}</span></a>
-        <ul class="side-tools">
+      <li class="side-group is-open" data-side-group="${g.id}">
+        <button class="side-group-head" type="button" data-toggle="${g.id}" aria-expanded="true">
+          <span class="side-group-name">${escapeHtml(g.name)}</span>
+          <span class="side-count">${list.length}</span>
+          <svg class="side-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="side-tools-wrap"><ul class="side-tools">
           ${list.map((t) => `
             <li><a class="side-tool${t.status === 'soon' ? ' is-soon' : ''}" href="#t-${t.id}" data-jump="${t.id}" style="--c:${t.color}">
               <span class="side-dot"></span>${escapeHtml(t.name)}${t.status === 'soon' ? '<small>準備中</small>' : t.internal ? '<small class="int">社内用</small>' : ''}
             </a></li>`).join('')}
-        </ul>
+        </ul></div>
       </li>`;
   });
   html += '</ul>';
@@ -237,6 +241,18 @@ function toast(msg) {
 const byId = (id) => TOOLS.find((t) => t.id === id);
 
 document.addEventListener('click', async (e) => {
+  // 左メニューのカテゴリー名：蛇腹を開閉。開いたときはそのカテゴリーまでスクロール
+  const tg = e.target.closest('[data-toggle]');
+  if (tg) {
+    const li = tg.closest('.side-group');
+    const mobile = window.matchMedia('(max-width:900px)').matches;
+    const open = mobile ? true : !li.classList.contains('is-open');
+    li.classList.toggle('is-open', open);
+    tg.setAttribute('aria-expanded', String(open));
+    if (open) document.getElementById('g-' + tg.dataset.toggle).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
   // 左メニューのセレクター名：そのカードまでスクロールして一瞬光らせる
   const jump = e.target.closest('[data-jump]');
   if (jump) {
