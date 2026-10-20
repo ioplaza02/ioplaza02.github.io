@@ -91,7 +91,6 @@ $('#lockForm').addEventListener('submit', async (e) => {
 
 // ===== 一覧表示 =====
 let currentGroup = 'all';
-let currentQuery = '';
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -106,10 +105,7 @@ function renderChips() {
 }
 
 function matches(t) {
-  if (currentGroup !== 'all' && t.group !== currentGroup) return false;
-  if (!currentQuery) return true;
-  const hay = [t.name, t.desc, t.tags.join(' '), t.keywords, t.url].join(' ').toLowerCase();
-  return currentQuery.toLowerCase().split(/\s+/).every((w) => hay.includes(w));
+  return currentGroup === 'all' || t.group === currentGroup;
 }
 
 function cardHtml(t) {
@@ -231,10 +227,6 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-$('#search').addEventListener('input', (e) => {
-  currentQuery = e.target.value.trim();
-  render();
-});
 
 // 同じタブで一度開けたら、タブを閉じるまでは再入力不要
 (function restore() {
