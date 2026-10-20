@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>セレクター ポータル（社内用）</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231f6feb'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- パスワード画面 -->
+<div id="lock" class="lock">
+  <form id="lockForm" class="lock-card" autocomplete="off">
+    <div class="lock-dot" aria-hidden="true"></div>
+    <h1>セレクター ポータル</h1>
+    <p>社内用ページです。パスワードを入力してください。</p>
+    <input id="lockInput" type="password" placeholder="パスワード" aria-label="パスワード">
+    <button type="submit">ひらく</button>
+    <p id="lockError" class="lock-error" hidden>パスワードが違います</p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="hero-badge">社内用</p>
+      <h1>商品選定セレクター ポータル</h1>
+      <p class="hero-lead">各セレクターへの入口です。カードの「パスワードをコピーして開く」を押すと、パスワードがコピーされた状態で新しいタブが開きます。開いた画面で貼り付け（Ctrl＋V）するだけで入れます。</p>
+      <div class="hero-tools">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="search" type="search" placeholder="セレクター名・商品ジャンルで探す（例：UPS、保守、USB）">
+        </label>
+      </div>
+      <div id="chips" class="chips" role="tablist"></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="groups"></div>
+    <p id="empty" class="empty" hidden>該当するセレクターがありません。</p>
+  </main>
+
+  <footer class="footer">
+    <p>各セレクターのパスワードは個別に設定されています。社外の方にお伝えする場合は、そのセレクターのURLとパスワードだけをお伝えください（このポータルのパスワードは社内のみ）。</p>
+    <p class="footer-sub">ioplaza02.github.io</p>
+  </footer>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="vault.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
