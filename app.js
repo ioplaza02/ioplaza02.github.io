@@ -90,22 +90,62 @@ $('#lockForm').addEventListener('submit', async (e) => {
 });
 
 // ===== 一覧表示 =====
-let currentGroup = 'all';
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-function renderChips() {
-  const items = [{ id: 'all', name: 'すべて' }, ...GROUPS];
-  $('#chips').innerHTML = items.map((g) => {
-    const n = g.id === 'all' ? TOOLS.length : TOOLS.filter((t) => t.group === g.id).length;
-    return `<button class="chip" role="tab" data-group="${g.id}" aria-selected="${g.id === currentGroup}">${escapeHtml(g.name)}（${n}）</button>`;
-  }).join('');
+// ---- 左のカテゴリーメニュー ----
+function renderSide() {
+  let html = '<p class="side-title">カテゴリー</p><ul class="side-list">';
+  GROUPS.forEach((g) => {
+    const list = TOOLS.filter((t) => t.group === g.id);
+    if (!list.length) return;
+    html += `
+      <li class="side-group" data-side-group="${g.id}">
+        <a class="side-group-link" href="#g-${g.id}">${escapeHtml(g.name)}<span class="side-count">${list.length}</span></a>
+        <ul class="side-tools">
+          ${list.map((t) => `
+            <li><a class="side-tool${t.status === 'soon' ? ' is-soon' : ''}" href="#t-${t.id}" data-jump="${t.id}" style="--c:${t.color}">
+              <span class="side-dot"></span>${escapeHtml(t.name)}${t.status === 'soon' ? '<small>準備中</small>' : t.internal ? '<small class="int">社内用</small>' : ''}
+            </a></li>`).join('')}
+        </ul>
+      </li>`;
+  });
+  html += '</ul>';
+  $('#side').innerHTML = html;
 }
 
-function matches(t) {
-  return currentGroup === 'all' || t.group === currentGroup;
+// カードが画面に入ったら、少しずつ時間差でふわっと表示
+function revealCards() {
+  const cards = document.querySelectorAll('.card.reveal');
+  if (!('IntersectionObserver' in window)) { cards.forEach((c) => c.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries) => {
+    let n = 0;
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      en.target.style.setProperty('--d', `${n++ * 80}ms`);
+      en.target.classList.add('in');
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.12 });
+  cards.forEach((c) => io.observe(c));
+}
+
+// 今見ているカテゴリーを左メニューで目立たせる
+let sideObserver;
+function watchSections() {
+  if (!('IntersectionObserver' in window)) return;
+  if (sideObserver) sideObserver.disconnect();
+  const visible = new Map();
+  sideObserver = new IntersectionObserver((entries) => {
+    entries.forEach((en) => visible.set(en.target.dataset.group, en.isIntersecting ? en.intersectionRatio : 0));
+    let best = null; let bestRatio = 0;
+    GROUPS.forEach((g) => { const r = visible.get(g.id) || 0; if (r > bestRatio) { best = g.id; bestRatio = r; } });
+    if (!best) return;
+    document.querySelectorAll('[data-side-group]').forEach((el) => el.classList.toggle('is-active', el.dataset.sideGroup === best));
+  }, { threshold: [0, 0.15, 0.3, 0.5, 0.75, 1], rootMargin: '-10% 0px -35% 0px' });
+  document.querySelectorAll('section.group').forEach((s) => sideObserver.observe(s));
 }
 
 function cardHtml(t) {
@@ -131,7 +171,7 @@ function cardHtml(t) {
         </button>
       </div>`;
   return `
-    <article class="card${soon ? ' is-soon' : ''}" style="${style}">
+    <article class="card reveal${soon ? ' is-soon' : ''}" id="t-${t.id}" style="${style}">
       <div class="card-band"></div>
       ${flag}
       <div class="card-body">
@@ -151,21 +191,21 @@ function cardHtml(t) {
 }
 
 function render() {
-  renderChips();
+  renderSide();
   let html = '';
-  let total = 0;
   GROUPS.forEach((g) => {
-    const list = TOOLS.filter((t) => t.group === g.id && matches(t));
+    const list = TOOLS.filter((t) => t.group === g.id);
     if (!list.length) return;
-    total += list.length;
     html += `
-      <section class="group">
+      <section class="group" id="g-${g.id}" data-group="${g.id}">
         <div class="group-head"><h2>${escapeHtml(g.name)}</h2>${g.sub ? `<span>${escapeHtml(g.sub)}</span>` : ''}</div>
         <div class="grid">${list.map(cardHtml).join('')}</div>
       </section>`;
   });
   $('#groups').innerHTML = html;
-  $('#empty').hidden = total > 0;
+  $('#empty').hidden = TOOLS.length > 0;
+  watchSections();
+  revealCards();
 }
 
 // ===== コピー =====
@@ -197,8 +237,17 @@ function toast(msg) {
 const byId = (id) => TOOLS.find((t) => t.id === id);
 
 document.addEventListener('click', async (e) => {
-  const chip = e.target.closest('[data-group]');
-  if (chip) { currentGroup = chip.dataset.group; render(); return; }
+  // 左メニューのセレクター名：そのカードまでスクロールして一瞬光らせる
+  const jump = e.target.closest('[data-jump]');
+  if (jump) {
+    e.preventDefault();
+    const card = document.getElementById('t-' + jump.dataset.jump);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
+    }
+    return;
+  }
 
   const openBtn = e.target.closest('[data-open]');
   if (openBtn) {
