@@ -65,6 +65,19 @@ body{
   margin:0;font-size:13.5px;font-weight:700;white-space:nowrap;
   background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 14px;
 }
+.hero-right{display:flex;gap:8px;flex-wrap:wrap}
+a.hero-link{color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .08s}
+a.hero-link::before{content:"";width:14px;height:14px;background:no-repeat center/14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/%3E%3C/svg%3E")}
+a.hero-link:hover{background:rgba(255,255,255,.3)}
+.ops-group{display:inline-flex}
+.ops-group .hero-link{border-radius:999px 0 0 999px}
+.hero-key{font:inherit;font-size:12.5px;font-weight:700;color:#fff;cursor:pointer;border-radius:0 999px 999px 0;border-left:0;
+  display:inline-flex;align-items:center;gap:5px;transition:background .2s,transform .08s}
+.hero-key::before{content:"";width:13px;height:13px;background:no-repeat center/13px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8' cy='15' r='4'/%3E%3Cpath d='M11 12l9-9M17 6l3 3M15 8l2 2'/%3E%3C/svg%3E")}
+.hero-key:hover{background:rgba(255,255,255,.3)}
+.hero-key:active{transform:translateY(1px)}
+a.hero-link:active{transform:translateY(1px)}
+.footer a{color:var(--blue)}
 .hero h1{font-size:clamp(18px,2.4vw,22px);font-weight:900;margin:0;letter-spacing:.02em;line-height:1.4}
 /* ===== 本体 ===== */
 html{scroll-behavior:smooth}
@@ -255,3 +268,5 @@ html{scroll-behavior:smooth}
 .card:hover .card-wm{opacity:.24;transform:rotate(0deg) scale(1.08) translate(-6px,-4px)}
 .card-body{position:relative;z-index:1}
 .card.is-soon .card-wm{filter:grayscale(1)}
+/* 右上の札（社内用・開発中）とタイトルが重ならないように */
+.card:has(.flag) .card-title{padding-right:52px}

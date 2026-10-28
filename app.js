@@ -16,6 +16,7 @@ const ICONS = {
   memory: '<rect x="3" y="7" width="18" height="9" rx="1"/><path d="M6 10v3M9 10v3M12 10v3M15 10v3M18 10v3"/><path d="M5 16v2M9 16v2M15 16v2M19 16v2"/>',
   switch: '<rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M6 11v2M9 11v2M12 11v2M15 11v2"/><circle cx="18.5" cy="12" r=".8"/>',
   signage: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/><path d="M10 8l4 2-4 2z"/>',
+  server: '<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h4M8 17.5h4"/><circle cx="16.5" cy="6.5" r=".8"/><circle cx="16.5" cy="17.5" r=".8"/>',
   security: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v2"/>'
 };
 
@@ -111,7 +112,7 @@ function renderSide() {
         <div class="side-tools-wrap"><ul class="side-tools">
           ${list.map((t) => `
             <li><a class="side-tool${t.status === 'soon' ? ' is-soon' : ''}" href="#t-${t.id}" data-jump="${t.id}" style="--c:${t.color}">
-              <span class="side-dot"></span>${escapeHtml(t.name)}${t.status === 'soon' ? '<small>準備中</small>' : t.internal ? '<small class="int">社内用</small>' : ''}
+              <span class="side-dot"></span>${escapeHtml(t.name)}${t.status === 'soon' ? '<small>開発中</small>' : t.internal ? '<small class="int">社内用</small>' : ''}
             </a></li>`).join('')}
         </ul></div>
       </li>`;
@@ -156,7 +157,7 @@ function cardHtml(t) {
   const soon = t.status === 'soon';
   const style = `--c:${t.color};${t.band ? `--band:${t.band};` : ''}`;
   const flag = t.internal ? '<span class="flag flag-internal">社内用</span>'
-             : soon ? '<span class="flag flag-soon">準備中</span>' : '';
+             : soon ? '<span class="flag flag-soon">開発中</span>' : '';
   const pw = soon ? '' : `
       <div class="pw">
         <span class="pw-label">パスワード</span>
@@ -164,7 +165,7 @@ function cardHtml(t) {
         <button class="btn-mini" data-copy-pw="${t.id}" type="button">コピー</button>
       </div>`;
   const actions = soon
-    ? `<div class="actions"><button class="btn btn-primary" type="button" disabled>準備中です</button></div>`
+    ? `<div class="actions"><button class="btn btn-primary" type="button" disabled>開発中です</button></div>`
     : `<div class="actions">
         <button class="btn btn-primary" data-open="${t.id}" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>
@@ -280,6 +281,7 @@ document.addEventListener('click', async (e) => {
   const pwBtn = e.target.closest('[data-copy-pw]');
   if (pwBtn) {
     const t = byId(pwBtn.dataset.copyPw);
+    if (!t) { toast('ページを再読み込みしてから、もう一度お試しください'); return; }
     const ok = await copyText(t.pw);
     toast(ok ? `パスワード「${t.pw}」をコピーしました` : `パスワードは「${t.pw}」です`);
     return;
@@ -298,7 +300,11 @@ document.addEventListener('click', async (e) => {
 (function restore() {
   const saved = storageGet(UNLOCK_KEY);
   if (saved) {
-    try { unlock(JSON.parse(saved)); return; } catch (e) { /* 壊れていたら入力し直し */ }
+    try {
+      const tools = JSON.parse(saved);
+      // 運用ページの情報が入っていない古い保存内容なら、入力し直してもらう
+      if (Array.isArray(tools) && tools.some((t) => t.id === 'ops')) { unlock(tools); return; }
+    } catch (e) { /* 壊れていたら入力し直し */ }
   }
   setTimeout(() => $('#lockInput').focus(), 50);
 })();

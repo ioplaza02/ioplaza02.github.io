@@ -55,6 +55,13 @@ const WATERMARKS = {
   signage: `<svg viewBox="0 0 120 120"><rect x="6" y="10" width="108" height="68" rx="5" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="5"/>
     <path d="M50 30l24 14-24 14z" fill="currentColor"/>
     <path d="M60 78v22M36 112l24-12 24 12" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  // サーバーバックアップ：ラックサーバー → LAN DISK へのバックアップ
+  server: `<svg viewBox="0 0 120 120"><g fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="4"><rect x="6" y="16" width="58" height="22" rx="4"/><rect x="6" y="44" width="58" height="22" rx="4"/><rect x="6" y="72" width="58" height="22" rx="4"/></g>
+    <g fill="currentColor"><rect x="13" y="24" width="24" height="6" rx="2"/><rect x="13" y="52" width="24" height="6" rx="2"/><rect x="13" y="80" width="24" height="6" rx="2"/></g>
+    <g fill="#fff"><circle cx="54" cy="27" r="2.6"/><circle cx="54" cy="55" r="2.6"/><circle cx="54" cy="83" r="2.6"/></g>
+    <path d="M68 55h14" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M78 47l8 8-8 8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="90" y="34" width="26" height="46" rx="4" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="4"/>
+    <g fill="currentColor"><rect x="95" y="40" width="7" height="34" rx="1.5"/><rect x="104" y="40" width="7" height="34" rx="1.5"/></g></svg>`,
   // セキュリティ：南京錠
   security: `<svg viewBox="0 0 120 120"><path d="M36 52V36a24 24 0 0 1 48 0v16" fill="none" stroke="currentColor" stroke-width="9"/>
     <rect x="22" y="50" width="76" height="62" rx="10" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="5"/>

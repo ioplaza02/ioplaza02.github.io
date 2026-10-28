@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>セレクターの運用について</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231f6feb'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16202e;--ink-2:#3b4757;--line:#dfe5ee;--bg:#f3f6fa;--card:#fff;
+  --blue:#1f6feb;--navy:#1d3b6e;--green:#13895a;--green-bg:#e7f6ee;--amber:#b7791f;--amber-bg:#fff6e0;--red:#c62828;--red-bg:#fdecec;
+  --shadow:0 1px 2px rgba(20,35,60,.06),0 6px 18px rgba(20,35,60,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans","Yu Gothic UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.8;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+
+/* ヘッダー（ポータルと同じ帯） */
+.hero{background:linear-gradient(135deg,#0f2b5c 0%,#1f6feb 60%,#3aa0ff 100%);color:#fff;padding:16px}
+.hero-inner{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px}
+.hero-title{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.hero-badge{font-size:clamp(16px,2vw,19px);font-weight:900;color:#ffd666}
+.hero h1{font-size:clamp(18px,2.4vw,22px);font-weight:900;margin:0;line-height:1.4}
+.hero-right{display:flex;gap:8px;flex-wrap:wrap}
+.pill{margin:0;font-size:13.5px;font-weight:700;white-space:nowrap;color:#fff;text-decoration:none;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 14px}
+a.pill:hover{background:rgba(255,255,255,.28)}
+
+main{max-width:1180px;margin:0 auto;padding:28px 16px 48px}
+section{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:26px 28px;margin-bottom:22px}
+h2{font-size:21px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+h2 .no{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-size:15px;display:grid;place-items:center}
+.lead{color:var(--ink-2);margin:0 0 18px}
+h3{font-size:16.5px;margin:22px 0 8px}
+p{margin:0 0 12px}
+ul{margin:0 0 12px;padding-left:1.3em}
+li{margin-bottom:6px}
+strong{font-weight:700}
+.mark{background:linear-gradient(transparent 60%,#ffe58a 60%)}
+small,.note{font-size:13px;color:var(--ink-2)}
+
+/* 結論 */
+.summary{background:linear-gradient(135deg,#0f2b5c,#1d4fa8);color:#fff}
+.summary h2{color:#fff}
+.summary .lead{color:rgba(255,255,255,.88)}
+.points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:6px}
+.point{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:16px}
+.point b{display:block;font-size:17px;margin-bottom:4px;color:#ffd666}
+.point span{font-size:14px;color:rgba(255,255,255,.92)}
+
+/* 数字 */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.stat{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;background:#fafcff}
+.stat .num{font-size:30px;font-weight:900;color:var(--navy);line-height:1.2}
+.stat .num small{font-size:15px;color:var(--navy);margin-left:2px}
+.stat .lbl{font-size:13.5px;color:var(--ink-2);margin-top:4px}
+
+/* 1日の流れ */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;position:relative;margin:8px 0 16px}
+.step{position:relative;border-radius:14px;padding:14px 14px 12px;background:#f3f7fe;border:1.5px solid #cfdcf3}
+.step .time{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--navy);border-radius:999px;padding:1px 10px;margin-bottom:6px}
+.step b{display:block;font-size:15px;margin-bottom:4px}
+.step span{font-size:13.5px;color:var(--ink-2);display:block;line-height:1.7}
+.step:not(:last-child)::after{content:"";position:absolute;right:-12px;top:50%;width:12px;height:12px;transform:translateY(-50%);
+  background:no-repeat center/12px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 1l6 5-6 5' fill='none' stroke='%231d3b6e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.branch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ok,.ng{border-radius:14px;padding:14px 16px}
+.ok{background:var(--green-bg);border:1.5px solid #b5e2c8}
+.ng{background:var(--amber-bg);border:1.5px solid #f1d58f}
+.ok b{color:var(--green)} .ng b{color:var(--amber)}
+.ok b,.ng b{display:block;font-size:15.5px;margin-bottom:4px}
+.ok span,.ng span{font-size:14px;display:block}
+
+/* 新商品 */
+.newflow{counter-reset:n;list-style:none;padding:0;margin:0 0 14px}
+.newflow li{counter-increment:n;position:relative;padding:10px 12px 10px 48px;border-radius:12px;background:#f6f9fd;margin-bottom:8px}
+.newflow li::before{content:counter(n);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:14px;display:grid;place-items:center}
+
+/* 表 */
+.table-wrap{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:920px;font-size:13.5px;line-height:1.65}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap;position:sticky;top:0}
+tbody tr:nth-child(even) td{background:#f8fafd}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;white-space:nowrap}
+td:nth-child(2){white-space:nowrap}
+table.sys td:nth-child(2){white-space:normal}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:#eef2f7;border-radius:5px;padding:1px 6px;word-break:break-all}
+table.sys{min-width:640px}
+table.sys td:first-child{white-space:normal}
+table.sys code,td code{white-space:nowrap;word-break:normal}
+.test-box{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1.5px solid #cfdcf3;background:#f3f7fe;border-radius:14px;padding:16px 18px}
+.test-box > div{flex:1;min-width:260px}
+.test-box b{display:block;font-size:15.5px;margin-bottom:4px}
+.test-box ul{margin-bottom:6px}
+.test-btn{flex:none;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#fff;background:var(--blue);font-weight:700;font-size:15px;border-radius:12px;padding:12px 18px;box-shadow:0 4px 0 #1550b8;transition:transform .08s,box-shadow .08s,filter .2s}
+.test-btn:hover{filter:brightness(1.08)}
+.test-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #1550b8}
+.test-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:0 7px;background:#eef2f7;color:var(--ink-2);white-space:nowrap}
+
+/* 工夫 */
+.tips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tip{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+.tip b{display:flex;align-items:center;gap:8px;font-size:15.5px;margin-bottom:4px}
+.tip b svg{flex:none;width:22px;height:22px;fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tip span{font-size:14px;color:var(--ink-2);display:block}
+
+/* 人の手 */
+.human{display:grid;gap:10px}
+.human div{border-left:4px solid var(--navy);background:#f6f9fd;border-radius:0 12px 12px 0;padding:10px 14px}
+.human b{display:block}
+.human span{font-size:14px;color:var(--ink-2)}
+
+.callout{background:var(--green-bg);border:1.5px solid #b5e2c8;border-radius:14px;padding:14px 16px;margin-top:14px}
+.callout b{color:var(--green)}
+
+dl.glossary{display:grid;grid-template-columns:200px 1fr;gap:0;margin:0;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+dl.glossary dt,dl.glossary dd{margin:0;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+dl.glossary dt{font-weight:700;background:#f6f9fd}
+dl.glossary dt:last-of-type,dl.glossary dd:last-of-type{border-bottom:0}
+
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none}
+.toc a{display:inline-block;font-size:13.5px;font-weight:700;text-decoration:none;color:var(--navy);background:#fff;border:1.5px solid #cfdae8;border-radius:999px;padding:4px 14px;transition:background .2s}
+.toc a:hover{background:#eaf1fd}
+
+.footer{max-width:1180px;margin:0 auto;padding:0 16px 40px;font-size:13px;color:var(--ink-2)}
+
+@media (max-width:820px){
+  section{padding:20px 18px}
+  .points,.flow{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .step:nth-child(2)::after{display:none}
+}
+@media (max-width:560px){
+  .points,.flow,.branch,.tips{grid-template-columns:1fr}
+  .step::after{display:none}
+  dl.glossary{grid-template-columns:1fr}
+  dl.glossary dt{border-bottom:0;padding-bottom:2px}
+}
+
+/* パスワード画面 */
+[hidden]{display:none !important}
+.lock{min-height:calc(100vh - 140px);display:flex;align-items:center;justify-content:center;padding:32px 16px}
+.lock-card{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:34px 28px 24px;box-shadow:0 2px 4px rgba(20,35,60,.08),0 14px 32px rgba(20,35,60,.14);text-align:center}
+.lock-dot{width:44px;height:44px;border-radius:50%;background:var(--blue);margin:0 auto 14px;box-shadow:0 6px 16px rgba(31,111,235,.35)}
+.lock-card h2{display:block;font-size:21px;margin:0 0 6px}
+.lock-card p{margin:0 0 18px;color:var(--ink-2);font-size:13.5px;line-height:1.7}
+.lock-card input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;outline:none;transition:border-color .2s,box-shadow .2s}
+.lock-card input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,111,235,.15)}
+.lock-card button{margin-top:12px;width:100%;font:inherit;font-weight:700;font-size:16px;color:#fff;background:var(--blue);border:0;border-radius:12px;padding:12px;cursor:pointer;box-shadow:0 4px 0 #1550b8;transition:transform .08s,box-shadow .08s}
+.lock-card button:active{transform:translateY(3px);box-shadow:0 1px 0 #1550b8}
+.lock-error{color:var(--red) !important;font-weight:700;margin:12px 0 0 !important}
+.lock-back{display:inline-block;margin-top:16px;font-size:13.5px;font-weight:700;text-decoration:none}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+#ops-main.show{animation:fadein .5s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-title">
+      <span class="hero-badge">【社内限定】</span>
+      <h1>セレクターの運用について</h1>
+    </div>
+    <div class="hero-right">
+      <a class="pill" href="./">← セレクター一覧へ</a>
+      <p class="pill">お問い合わせ先：IS課 西川</p>
+    </div>
+  </div>
+</header>
+
+<main id="ops-main" hidden></main>
+
+<!-- パスワード画面（ポータルの「運用について」から開いたときは自動で開きます） -->
+<div id="lock" class="lock">
+  <form id="lockForm" class="lock-card" autocomplete="off">
+    <div class="lock-dot" aria-hidden="true"></div>
+    <h2>運用ページ</h2>
+    <p>ポータルの「運用について」から開くと、自動で表示されます。<br>直接開いた場合は、運用ページのパスワードを入力してください。</p>
+    <input id="lockInput" type="password" placeholder="パスワード" aria-label="パスワード">
+    <button type="submit">ひらく</button>
+    <p id="lockError" class="lock-error" hidden>パスワードが違います</p>
+    <a class="lock-back" href="./">← ポータルへ戻る</a>
+  </form>
+</div>
+
+
+<footer class="footer" id="ops-footer" hidden>
+  <p>ご不明な点は、IS課 西川までお問い合わせください。</p>
+</footer>
+<script src="ops-vault.js"></script>
+<script src="ops.js"></script>
+</body>
+</html>
