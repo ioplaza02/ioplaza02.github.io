@@ -1,0 +1,42 @@
+# テスト通知：異常時のメールが担当に届くかを確かめるためのワークフロー
+# GitHubの「Actions」→「テスト通知」→「Run workflow」から手動で実行します（自動では動きません）
+name: テスト通知
+
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "送る知らせの種類"
+        type: choice
+        options:
+          - 両方
+          - Issueのみ
+          - 失敗通知のみ
+        default: 両方
+
+permissions:
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) 各セレクターが異常時に作るのと同じ「要確認」の記録（Issue）を作る → 通知メールが届く
+      #    作ったIssueはすぐ「完了（Close）」にするので、後片付けは不要
+      - name: 「要確認」の記録（Issue）の通知を送る
+        if: inputs.kind != '失敗通知のみ'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOW=$(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M')
+          BODY=$(printf '@%s\n\nこれはテスト通知です（%s 日本時間に手動で実行）。\n\nこのメールが届いていれば、セレクターの自動更新で異常があったときの「要確認」の知らせも、同じように届きます。\n\nこの記録は自動で完了扱いにしています。対応は不要です。' "${{ github.repository_owner }}" "$NOW")
+          URL=$(gh issue create -R "${{ github.repository }}" --title "【テスト】通知の確認 $NOW" --body "$BODY")
+          echo "作成した記録: $URL"
+          gh issue close "$URL" -R "${{ github.repository }}" --reason "completed"
+
+      # 2) B社比較などが読み取りに失敗したときと同じ「失敗」の通知を送るため、わざと失敗で終わらせる
+      - name: 自動作業の失敗の通知を送る（テストのため、わざと失敗させます）
+        if: inputs.kind != 'Issueのみ'
+        run: |
+          echo "これはテストです。わざと「失敗」として終了し、失敗の通知メールが届くかを確認します。"
+          exit 1
