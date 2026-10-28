@@ -177,6 +177,7 @@ function cardHtml(t) {
   return `
     <article class="card reveal${soon ? ' is-soon' : ''}" id="t-${t.id}" style="${style}">
       <div class="card-band"></div>
+      ${WATERMARKS[t.icon] ? `<div class="card-wm" aria-hidden="true">${WATERMARKS[t.icon]}</div>` : ''}
       ${flag}
       <div class="card-body">
         <div class="card-top">
