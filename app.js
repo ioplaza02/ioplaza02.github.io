@@ -3,6 +3,7 @@
 // 入力されたパスワードを鍵にして復号するので、パスワードを知らない人はソースを見ても中身を読めません。
 // 一覧を変更するときは encrypt.html（手元用ツール）で vault.js を作り直してください。
 const UNLOCK_KEY = 'selector-portal-tools';
+const VAULT_VER_KEY = 'selector-portal-vault-ver'; // 覚えている一覧の版（vault.js が更新されたら入力し直してもらう）
 
 // ---- アイコン（線画SVG） ----
 const ICONS = {
@@ -26,9 +27,7 @@ const GROUPS = [
   { id: 'nas',     name: 'NAS（LAN DISK）関連',   sub: 'LAN DISK本体と、組み合わせる保守・バックアップ・UPS' },
   { id: 'storage', name: '外付けストレージ',       sub: 'パソコン・スマホ・テレビにつなぐもの' },
   { id: 'pc',      name: 'パソコン・ネットワーク', sub: '' },
-  { id: 'signage', name: 'サイネージ',             sub: '' },
-  { id: 'news',    name: '新商品情報',             sub: '新しく発表された商品と旧型の違いを確認' },
-  { id: 'security',name: 'セキュリティ',           sub: '' }
+  { id: 'other',   name: 'その他',                 sub: 'サイネージ・新商品情報・セキュリティ' }
 ];
 
 // ---- セレクター一覧 ----
@@ -79,6 +78,7 @@ $('#lockForm').addEventListener('submit', async (e) => {
   try {
     const tools = await decryptVault(v);
     storageSet(UNLOCK_KEY, JSON.stringify(tools));
+    storageSet(VAULT_VER_KEY, window.VAULT.iv); // どの版の一覧を覚えたかの目印
     unlock(tools);
   } catch (err) {
     // パスワード違いのときは復号に失敗する
@@ -305,7 +305,9 @@ document.addEventListener('click', async (e) => {
     try {
       const tools = JSON.parse(saved);
       // 運用ページの情報が入っていない古い保存内容なら、入力し直してもらう
-      if (Array.isArray(tools) && tools.some((t) => t.id === 'ops')) { unlock(tools); return; }
+      // 一覧（vault.js）が更新されていたら、覚えていた古い一覧は使わず、パスワードを入れ直してもらう
+      const sameVersion = storageGet(VAULT_VER_KEY) === window.VAULT.iv;
+      if (sameVersion && Array.isArray(tools) && tools.some((t) => t.id === 'ops')) { unlock(tools); return; }
     } catch (e) { /* 壊れていたら入力し直し */ }
   }
   setTimeout(() => $('#lockInput').focus(), 50);
