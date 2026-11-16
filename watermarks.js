@@ -62,6 +62,19 @@ const WATERMARKS = {
     <path d="M68 55h14" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M78 47l8 8-8 8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="90" y="34" width="26" height="46" rx="4" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="4"/>
     <g fill="currentColor"><rect x="95" y="40" width="7" height="34" rx="1.5"/><rect x="104" y="40" width="7" height="34" rx="1.5"/></g></svg>`,
+  // 新商品 差分カレンダー：日めくりカレンダー＋「旧→新」の比較表（違いの行を強調）
+  calendar: `<svg viewBox="0 0 120 120"><g transform="translate(4,6) scale(.86)"><rect x="6" y="14" width="74" height="72" rx="8" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="4"/>
+    <path d="M6 32h74" stroke="currentColor" stroke-width="4"/><rect x="6" y="14" width="74" height="18" rx="8" fill="currentColor"/>
+    <path d="M24 8v14M62 8v14" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    <g fill="currentColor" fill-opacity=".55"><rect x="14" y="40" width="10" height="9" rx="2"/><rect x="30" y="40" width="10" height="9" rx="2"/><rect x="62" y="40" width="10" height="9" rx="2"/><rect x="14" y="56" width="10" height="9" rx="2"/><rect x="30" y="56" width="10" height="9" rx="2"/><rect x="46" y="56" width="10" height="9" rx="2"/><rect x="14" y="72" width="10" height="9" rx="2"/></g>
+    <circle cx="51" cy="44.5" r="9" fill="none" stroke="currentColor" stroke-width="4"/>
+    <rect x="52" y="62" width="62" height="52" rx="6" fill="#fff" stroke="currentColor" stroke-width="4"/>
+    <path d="M52 76h62M83 62v52" stroke="currentColor" stroke-width="3"/>
+    <text x="67" y="73" text-anchor="middle" font-size="10" font-weight="900" fill="currentColor" font-family="sans-serif">旧</text>
+    <text x="99" y="73" text-anchor="middle" font-size="10" font-weight="900" fill="currentColor" font-family="sans-serif">新</text>
+    <rect x="54" y="88" width="58" height="10" fill="currentColor"/>
+    <g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M60 83h14M90 83h14M60 106h14M90 106h14"/></g>
+    <g stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M60 93h14M90 93h14"/></g></g></svg>`,
   // セキュリティ：南京錠
   security: `<svg viewBox="0 0 120 120"><path d="M36 52V36a24 24 0 0 1 48 0v16" fill="none" stroke="currentColor" stroke-width="9"/>
     <rect x="22" y="50" width="76" height="62" rx="10" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="5"/>

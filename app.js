@@ -17,6 +17,7 @@ const ICONS = {
   switch: '<rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M6 11v2M9 11v2M12 11v2M15 11v2"/><circle cx="18.5" cy="12" r=".8"/>',
   signage: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/><path d="M10 8l4 2-4 2z"/>',
   server: '<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h4M8 17.5h4"/><circle cx="16.5" cy="6.5" r=".8"/><circle cx="16.5" cy="17.5" r=".8"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 14h4M7 17.5h10"/><path d="M14 13.5l1.5 1.5 3-3"/>',
   security: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v2"/>'
 };
 
@@ -26,6 +27,7 @@ const GROUPS = [
   { id: 'storage', name: '外付けストレージ',       sub: 'パソコン・スマホ・テレビにつなぐもの' },
   { id: 'pc',      name: 'パソコン・ネットワーク', sub: '' },
   { id: 'signage', name: 'サイネージ',             sub: '' },
+  { id: 'news',    name: '新商品情報',             sub: '新しく発表された商品と旧型の違いを確認' },
   { id: 'security',name: 'セキュリティ',           sub: '' }
 ];
 
